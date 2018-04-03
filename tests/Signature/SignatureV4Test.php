@@ -245,7 +245,7 @@ class SignatureV4Test extends TestCase
         $this->assertContains('content-md5;host;x-amz-date;x-amz-foo', $signed->getHeaderLine('Authorization'));
     }
 
-    public function testPreSignSpecificHeaders()
+    public function testPresignSpecificHeaders()
     {
         $sig = new SignatureV4('foo', 'bar');
         $creds = new Credentials('a', 'b');
@@ -261,7 +261,7 @@ class SignatureV4Test extends TestCase
         $this->assertContains(urlencode('host;x-amz-foo;content-md5;x-amz-meta-foo'), (string)$preSigned->getUri());
     }
 
-    public function testPreSignBlacklistedHeaders()
+    public function testPresignBlacklistedHeaders()
     {
         $sig = new SignatureV4('foo', 'bar');
         $creds = new Credentials('a', 'b');
