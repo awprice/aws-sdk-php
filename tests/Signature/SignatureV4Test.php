@@ -257,8 +257,8 @@ class SignatureV4Test extends TestCase
             'x-amz-meta-foo' => 'bar',
             'x-amz-content-sha256' => 'abc',
         ]);
-        $preSigned = $sig->presign($req, $creds, '+5 minutes');
-        $this->assertContains(urlencode('host;x-amz-foo;content-md5;x-amz-meta-foo'), (string)$preSigned->getUri());
+        $presigned = $sig->presign($req, $creds, '+5 minutes');
+        $this->assertContains(urlencode('host;x-amz-foo;content-md5;x-amz-meta-foo'), (string)$presigned->getUri());
     }
 
     public function testPresignBlacklistedHeaders()
@@ -270,10 +270,10 @@ class SignatureV4Test extends TestCase
             'content-length' => '1000',
             'Content-Type' => 'text/html',
         ]);
-        $preSigned = $sig->presign($req, $creds, '+5 minutes');
-        $this->assertNotContains('user-agent', (string)$preSigned->getUri());
-        $this->assertNotContains('content-length', (string)$preSigned->getUri());
-        $this->assertNotContains('Content-Type', (string)$preSigned->getUri());
+        $presigned = $sig->presign($req, $creds, '+5 minutes');
+        $this->assertNotContains('user-agent', (string)$presigned->getUri());
+        $this->assertNotContains('content-length', (string)$presigned->getUri());
+        $this->assertNotContains('Content-Type', (string)$presigned->getUri());
     }
 
     /**
