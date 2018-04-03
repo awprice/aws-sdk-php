@@ -119,17 +119,17 @@ class SignatureV4 implements SignatureInterface
      * @param array $headers
      * @return array
      */
-    private function getPreSignHeaders(array $headers)
+    private function getPresignHeaders(array $headers)
     {
-        $preSignHeaders = [];
+        $presignHeaders = [];
         $blacklist = $this->getHeaderBlacklist();
         foreach ($headers as $name => $value) {
             $lName = strtolower($name);
             if (!isset($blacklist[$lName]) && $name !== self::AMZ_CONTENT_SHA256_HEADER) {
-                $preSignHeaders[] = $lName;
+                $presignHeaders[] = $lName;
             }
         }
-        return $preSignHeaders;
+        return $presignHeaders;
     }
 
     public function presign(
@@ -154,7 +154,7 @@ class SignatureV4 implements SignatureInterface
         $parsed['query']['X-Amz-Algorithm'] = 'AWS4-HMAC-SHA256';
         $parsed['query']['X-Amz-Credential'] = $credential;
         $parsed['query']['X-Amz-Date'] = gmdate('Ymd\THis\Z', $startTimestamp);
-        $parsed['query']['X-Amz-SignedHeaders'] = join(';', $this->getPreSignHeaders($parsed['headers']));
+        $parsed['query']['X-Amz-SignedHeaders'] = join(';', $this->getPresignHeaders($parsed['headers']));
         $parsed['query']['X-Amz-Expires'] = $this->convertExpires($expiresTimestamp, $startTimestamp);
         $context = $this->createContext($parsed, $payload);
         $stringToSign = $this->createStringToSign($httpDate, $scope, $context['creq']);
