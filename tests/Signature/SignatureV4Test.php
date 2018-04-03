@@ -245,6 +245,22 @@ class SignatureV4Test extends TestCase
         $this->assertContains('content-md5;host;x-amz-date;x-amz-foo', $signed->getHeaderLine('Authorization'));
     }
 
+    public function testPreSignSpecificHeaders()
+    {
+        $sig = new SignatureV4('foo', 'bar');
+        $creds = new Credentials('a', 'b');
+        $req = new Request('PUT', 'http://foo.com', [
+            'x-amz-date' => 'today',
+            'host' => 'foo.com',
+            'x-amz-foo' => '123',
+            'content-md5' => 'bogus',
+            'x-amz-meta-foo' => 'bar',
+            'x-amz-content-sha256' => 'abc',
+        ]);
+        $preSigned = $sig->presign($req, $creds, '+5 minutes');
+        $this->assertContains(urlencode('host;x-amz-foo;content-md5;x-amz-meta-foo'), (string)$preSigned->getUri());
+    }
+
     /**
      * @expectedException \Aws\Exception\CouldNotCreateChecksumException
      */
