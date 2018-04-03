@@ -261,6 +261,21 @@ class SignatureV4Test extends TestCase
         $this->assertContains(urlencode('host;x-amz-foo;content-md5;x-amz-meta-foo'), (string)$preSigned->getUri());
     }
 
+    public function testPreSignBlacklistedHeaders()
+    {
+        $sig = new SignatureV4('foo', 'bar');
+        $creds = new Credentials('a', 'b');
+        $req = new Request('PUT', 'http://foo.com', [
+            'user-agent' => 'curl',
+            'content-length' => '1000',
+            'Content-Type' => 'text/html',
+        ]);
+        $preSigned = $sig->presign($req, $creds, '+5 minutes');
+        $this->assertNotContains('user-agent', (string)$preSigned->getUri());
+        $this->assertNotContains('content-length', (string)$preSigned->getUri());
+        $this->assertNotContains('Content-Type', (string)$preSigned->getUri());
+    }
+
     /**
      * @expectedException \Aws\Exception\CouldNotCreateChecksumException
      */
